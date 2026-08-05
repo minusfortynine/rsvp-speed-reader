@@ -19,7 +19,6 @@ This repository contains a WPF desktop app that presents one word at a time usin
 ## Project Structure
 
 - `RocketReader.Windows/` - the Windows application project
-- `RocketReaderApp.swift` - the original Swift prototype reference
 
 ## Run Locally
 
