@@ -1,0 +1,333 @@
+﻿<Window x:Class="RocketReader.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RocketReader.Windows"
+        mc:Ignorable="d"
+        Title="Rocket Reader"
+        Icon="Assets/RocketReader.ico"
+        Width="1200"
+        Height="820"
+        MinWidth="960"
+        MinHeight="720"
+        Background="#0B0B0E"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
+        <Style x:Key="PanelCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="#13151A" />
+            <Setter Property="BorderBrush" Value="#252932" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="18" />
+            <Setter Property="Padding" Value="20" />
+        </Style>
+
+        <Style x:Key="SectionLabelStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#F1F5F9" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="#D12D2D" />
+            <Setter Property="BorderBrush" Value="#D12D2D" />
+            <Setter Property="Padding" Value="18,12" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="12">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+            <Setter Property="Background" Value="#1C212B" />
+            <Setter Property="BorderBrush" Value="#313744" />
+            <Setter Property="Foreground" Value="#E2E8F0" />
+        </Style>
+
+        <Style x:Key="IconButtonStyle" TargetType="Button" BasedOn="{StaticResource SecondaryButtonStyle}">
+            <Setter Property="Padding" Value="14,10" />
+            <Setter Property="MinWidth" Value="54" />
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid Visibility="{Binding IsReaderVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#090A0D" Offset="0" />
+                    <GradientStop Color="#11141B" Offset="0.55" />
+                    <GradientStop Color="#090A0D" Offset="1" />
+                </LinearGradientBrush>
+            </Grid.Background>
+
+            <Grid Margin="28">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <DockPanel Grid.Row="0" LastChildFill="False">
+                    <Button Style="{StaticResource SecondaryButtonStyle}"
+                            Padding="16,10"
+                            Click="ExitReader_Click">
+                        Exit Reader
+                    </Button>
+                    <TextBlock DockPanel.Dock="Right"
+                               VerticalAlignment="Center"
+                               Foreground="#D7DEE7"
+                               FontFamily="Consolas"
+                               FontSize="16"
+                               Text="{Binding CurrentWpmLabel, Mode=OneWay}" />
+                </DockPanel>
+
+                <ProgressBar Grid.Row="1"
+                             Height="10"
+                             Margin="0,20,0,0"
+                             Background="#20252E"
+                             Foreground="#D12D2D"
+                             Value="{Binding ProgressPercent, Mode=OneWay}"
+                             Maximum="100" />
+
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5" />
+                            <ColumnDefinition Width="760" />
+                            <ColumnDefinition Width="1.5" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Width="1.5" Height="92" Background="#29FFFFFF" />
+                        <Border Grid.Column="2" Width="1.5" Height="92" Background="#29FFFFFF" />
+
+                        <Viewbox Grid.Column="1"
+                                 Stretch="Uniform"
+                                 StretchDirection="DownOnly"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center">
+                            <Grid Width="760">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="360" />
+                                    <ColumnDefinition Width="40" />
+                                    <ColumnDefinition Width="360" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0"
+                                           Text="{Binding CurrentPrefix, Mode=OneWay}"
+                                           TextAlignment="Right"
+                                           HorizontalAlignment="Right"
+                                           VerticalAlignment="Center"
+                                           Foreground="#E2E8F0"
+                                           FontSize="52"
+                                           FontWeight="Medium"
+                                           FontFamily="Segoe UI" />
+
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding CurrentOrp, Mode=OneWay}"
+                                           TextAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="#EF4444"
+                                           FontSize="52"
+                                           FontWeight="Bold"
+                                           FontFamily="Segoe UI" />
+
+                                <TextBlock Grid.Column="2"
+                                           Text="{Binding CurrentSuffix, Mode=OneWay}"
+                                           TextAlignment="Left"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           Foreground="#E2E8F0"
+                                           FontSize="52"
+                                           FontWeight="Medium"
+                                           FontFamily="Segoe UI" />
+                            </Grid>
+                        </Viewbox>
+                    </Grid>
+
+                    <StackPanel Grid.Row="1" Margin="0,0,0,28">
+                        <Slider Minimum="150"
+                                Maximum="1200"
+                                TickFrequency="25"
+                                IsSnapToTickEnabled="True"
+                                Value="{Binding TargetWpm, UpdateSourceTrigger=PropertyChanged}"
+                                Margin="80,0,80,0" />
+
+                        <DockPanel Margin="0,18,0,0" LastChildFill="False">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button Style="{StaticResource IconButtonStyle}" Margin="0,0,12,0" Click="Back_Click">-8</Button>
+                                <Button Style="{StaticResource PrimaryButtonStyle}" MinWidth="120" Click="PlayPause_Click" Content="{Binding PlayPauseLabel, Mode=OneWay}" />
+                                <Button Style="{StaticResource IconButtonStyle}" Margin="12,0,0,0" Click="Forward_Click">+8</Button>
+                            </StackPanel>
+                        </DockPanel>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
+                            <CheckBox Foreground="#E2E8F0"
+                                      IsChecked="{Binding IsMetronomeEnabled}"
+                                      Margin="0,0,22,0"
+                                      VerticalAlignment="Center"
+                                      Content="Metronome" />
+                            <CheckBox Foreground="#E2E8F0"
+                                      IsChecked="{Binding UseWarmup}"
+                                      VerticalAlignment="Center"
+                                      Content="Warm-up" />
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <Grid Visibility="{Binding IsEditorVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#0B0B0E" Offset="0" />
+                    <GradientStop Color="#131823" Offset="0.6" />
+                    <GradientStop Color="#0B0B0E" Offset="1" />
+                </LinearGradientBrush>
+            </Grid.Background>
+
+            <Grid Margin="28">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2.1*" />
+                    <ColumnDefinition Width="1.2*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="0,0,22,0">
+                    <TextBlock Foreground="White" FontSize="36" FontWeight="SemiBold" Text="Rocket Reader" />
+                    <TextBlock Margin="0,10,0,0"
+                               Foreground="#B4BDC9"
+                               FontSize="15"
+                               TextWrapping="Wrap"
+                               Text="Windows-native RSVP reader with ORP fixation, punctuation-aware pacing, and a warm-up ramp modeled on your iOS prototype." />
+
+                    <Border Style="{StaticResource PanelCardStyle}" Margin="0,24,0,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Style="{StaticResource SectionLabelStyle}" Text="Reader Text" />
+
+                            <TextBox Grid.Row="1"
+                                     Margin="0,14,0,0"
+                                     Padding="14"
+                                     AcceptsReturn="True"
+                                     VerticalScrollBarVisibility="Auto"
+                                     HorizontalScrollBarVisibility="Disabled"
+                                     TextWrapping="Wrap"
+                                     MinHeight="320"
+                                     Background="#0D1117"
+                                     BorderBrush="#303743"
+                                     Foreground="#E2E8F0"
+                                     FontSize="16"
+                                     Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,18,0,0">
+                                <Button Style="{StaticResource PrimaryButtonStyle}" Click="StartReader_Click" Content="Start Rocket Reader" />
+                                <Button Style="{StaticResource SecondaryButtonStyle}" Margin="12,0,0,0" Click="ImportFile_Click" Content="Open PDF or TXT" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1">
+                    <Border Style="{StaticResource PanelCardStyle}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Style="{StaticResource SectionLabelStyle}" Text="Session Controls" />
+
+                            <StackPanel Grid.Row="1" Margin="0,14,0,0">
+                                <TextBlock Foreground="#B4BDC9" FontSize="13" Text="Target WPM" />
+                                <TextBlock Foreground="White" FontFamily="Consolas" FontSize="22" Text="{Binding TargetWpmLabel, Mode=OneWay}" />
+                                <Slider Minimum="150"
+                                        Maximum="1200"
+                                        TickFrequency="25"
+                                        IsSnapToTickEnabled="True"
+                                        Value="{Binding TargetWpm, UpdateSourceTrigger=PropertyChanged}"
+                                        Margin="0,10,0,0" />
+                            </StackPanel>
+
+                            <UniformGrid Grid.Row="2" Columns="2" Margin="0,18,0,0">
+                                <Border Margin="0,0,10,0" Padding="14" CornerRadius="12" Background="#0D1117" BorderBrush="#2A3140" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Foreground="#8D97A7" FontSize="12" Text="Words Loaded" />
+                                        <TextBlock Foreground="White" FontSize="24" FontWeight="SemiBold" Text="{Binding WordCount, Mode=OneWay}" />
+                                    </StackPanel>
+                                </Border>
+                                <Border Margin="10,0,0,0" Padding="14" CornerRadius="12" Background="#0D1117" BorderBrush="#2A3140" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Foreground="#8D97A7" FontSize="12" Text="Warm-up" />
+                                        <TextBlock Foreground="White" FontSize="24" FontWeight="SemiBold" Text="{Binding WarmupStatus, Mode=OneWay}" />
+                                    </StackPanel>
+                                </Border>
+                            </UniformGrid>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource PanelCardStyle}" Margin="0,22,0,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Style="{StaticResource SectionLabelStyle}" Text="Recent Texts" />
+
+                            <ListBox Grid.Row="1"
+                                     Margin="0,14,0,0"
+                                     BorderThickness="0"
+                                     Background="Transparent"
+                                     Foreground="#E2E8F0"
+                                     ItemsSource="{Binding RecentItems, Mode=OneWay}"
+                                     SelectionChanged="RecentList_SelectionChanged"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="0,0,0,10" Padding="14" CornerRadius="12" Background="#0D1117" BorderBrush="#2A3140" BorderThickness="1">
+                                            <StackPanel>
+                                                <TextBlock Foreground="White" FontWeight="SemiBold" Text="{Binding Title, Mode=OneWay}" />
+                                                <TextBlock Margin="0,6,0,0"
+                                                           Foreground="#A7B0BD"
+                                                           FontSize="12"
+                                                           TextWrapping="Wrap"
+                                                           MaxHeight="48"
+                                                           Text="{Binding Preview, Mode=OneWay}" />
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

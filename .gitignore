@@ -1,0 +1,11 @@
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.cache
+*.tmp
+*.pdb
+
+RocketReader.Windows/bin/
+RocketReader.Windows/obj/
