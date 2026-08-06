@@ -212,15 +212,22 @@
                     <ColumnDefinition Width="1.2*" />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Column="0" Margin="0,0,22,0">
+                <Grid Grid.Column="0" Margin="0,0,22,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
                     <TextBlock Foreground="White" FontSize="36" FontWeight="SemiBold" Text="Rocket Reader" />
-                    <TextBlock Margin="0,10,0,0"
+                    <TextBlock Grid.Row="1"
+                               Margin="0,10,0,0"
                                Foreground="#B4BDC9"
                                FontSize="15"
                                TextWrapping="Wrap"
-                               Text="Windows-native RSVP reader with ORP fixation, punctuation-aware pacing, and a warm-up ramp modeled on your iOS prototype." />
+                               Text="Windows-native RSVP reader with ORP fixation, punctuation-aware pacing, and a warm-up ramp modeled on your iOS prototype. Paste a website URL, plain text, or use the file picker to load content." />
 
-                    <Border Style="{StaticResource PanelCardStyle}" Margin="0,24,0,0">
+                    <Border Grid.Row="2" Style="{StaticResource PanelCardStyle}" Margin="0,24,0,0">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -237,6 +244,7 @@
                                      VerticalScrollBarVisibility="Auto"
                                      HorizontalScrollBarVisibility="Disabled"
                                      TextWrapping="Wrap"
+                                     VerticalAlignment="Stretch"
                                      MinHeight="320"
                                      Background="#0D1117"
                                      BorderBrush="#303743"
@@ -246,13 +254,14 @@
 
                             <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,18,0,0">
                                 <Button Style="{StaticResource PrimaryButtonStyle}" Click="StartReader_Click" Content="Start Rocket Reader" />
-                                <Button Style="{StaticResource SecondaryButtonStyle}" Margin="12,0,0,0" Click="ImportFile_Click" Content="Open PDF or TXT" />
+                                <Button Style="{StaticResource SecondaryButtonStyle}" Margin="12,0,0,0" Click="ImportFile_Click" Content="Open PDF, TXT, or EPUB" />
                             </StackPanel>
                         </Grid>
                     </Border>
-                </StackPanel>
+                </Grid>
 
                 <StackPanel Grid.Column="1">
+
                     <Border Style="{StaticResource PanelCardStyle}">
                         <Grid>
                             <Grid.RowDefinitions>

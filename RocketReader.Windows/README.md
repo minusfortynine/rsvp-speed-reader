@@ -9,7 +9,8 @@ Current feature set:
 - Punctuation-aware and word-length-aware pause multipliers
 - Adjustable reading speed from 150 to 1200 WPM
 - Optional metronome click
-- Import from TXT and PDF files
+- Import from TXT, PDF, and EPUB files
+- Paste a website URL into the text field to fetch readable page text before starting the reader
 - Recent text persistence and last-session WPM restore
 - Red-dot app icon for the EXE and running window
 - Release publishing as a self-contained single-file executable
@@ -26,6 +27,16 @@ Publish a single EXE:
 dotnet publish .\RocketReader.Windows -c Release
 ```
 
+Current release:
+
+- Version `0.1.3`
+- Standalone EXE: `.\RocketReader.Windows\bin\Release\net8.0-windows\win-x64\publish\RocketReader-v0.1.3-win-x64.exe`
+
 Published output:
 
 - `.\RocketReader.Windows\bin\Release\net8.0-windows\win-x64\publish\RocketReader.Windows.exe`
+- `.\RocketReader.Windows\bin\Release\net8.0-windows\win-x64\publish\RocketReader-v0.1.3-win-x64.exe`
+
+The release build is self-contained and publishes as a single-file executable.
+
+Website URLs entered in the main text box are converted to readable page text before the reader starts.

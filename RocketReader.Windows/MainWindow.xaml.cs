@@ -3,20 +3,30 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.IO.Compression;
+using System.Net;
+using System.Net.Http;
 using System.Linq;
 using System.Media;
+using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using UglyToad.PdfPig;
+using System.Xml.Linq;
 
 namespace RocketReader.Windows;
 
 public partial class MainWindow : Window
 {
+    private const uint EsContinuous = 0x80000000;
+    private const uint EsDisplayRequired = 0x00000002;
+    private const uint EsSystemRequired = 0x00000001;
     private readonly ReaderViewModel viewModel = new();
     private bool isFullscreen;
     private WindowState restoreWindowState;
@@ -28,8 +38,17 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = viewModel;
-        Closed += (_, _) => viewModel.Dispose();
+        Closed += MainWindow_Closed;
         PreviewKeyDown += MainWindow_PreviewKeyDown;
+    }
+
+    [DllImport("kernel32.dll")]
+    private static extern uint SetThreadExecutionState(uint esFlags);
+
+    private void MainWindow_Closed(object? sender, EventArgs e)
+    {
+        RestoreExecutionState();
+        viewModel.Dispose();
     }
 
     private void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -66,6 +85,7 @@ public partial class MainWindow : Window
         ResizeMode = ResizeMode.NoResize;
         Topmost = true;
         WindowState = WindowState.Maximized;
+        PreventSleepWhileFullscreen();
     }
 
     private void ExitFullscreen()
@@ -80,18 +100,36 @@ public partial class MainWindow : Window
         WindowStyle = restoreWindowStyle;
         ResizeMode = restoreResizeMode;
         WindowState = restoreWindowState;
+        RestoreExecutionState();
+    }
+
+    private static void PreventSleepWhileFullscreen()
+    {
+        SetThreadExecutionState(EsContinuous | EsDisplayRequired | EsSystemRequired);
+    }
+
+    private static void RestoreExecutionState()
+    {
+        SetThreadExecutionState(EsContinuous);
     }
 
     private void StartReader_Click(object sender, RoutedEventArgs e)
     {
-        viewModel.StartReader();
+        try
+        {
+            viewModel.StartReader();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, ex.Message, "Start failed", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private void ImportFile_Click(object sender, RoutedEventArgs e)
     {
         var dialog = new OpenFileDialog
         {
-            Filter = "Supported Files|*.txt;*.pdf|Text Files|*.txt|PDF Files|*.pdf",
+            Filter = "Supported Files|*.txt;*.pdf;*.epub|Text Files|*.txt|PDF Files|*.pdf|EPUB Files|*.epub",
             Multiselect = false
         };
 
@@ -146,6 +184,7 @@ public sealed class ReaderViewModel : INotifyPropertyChanged, IDisposable
 {
     private const int WarmupWords = 40;
     private readonly DispatcherTimer timer;
+    private readonly HttpClient httpClient = new();
     private readonly string storagePath;
     private string currentOrp = string.Empty;
     private string currentPrefix = string.Empty;
@@ -313,7 +352,17 @@ public sealed class ReaderViewModel : INotifyPropertyChanged, IDisposable
             return;
         }
 
-        LoadText(InputText, addToRecents: true, title: "Pasted Text");
+        string sourceText = InputText;
+        string title = "Pasted Text";
+
+        if (TryGetWebsiteUri(InputText, out Uri websiteUri))
+        {
+            sourceText = LoadFromWebsite(websiteUri);
+            title = $"Website: {websiteUri.Host}";
+            InputText = sourceText;
+        }
+
+        LoadText(sourceText, addToRecents: true, title: title);
         IsReaderVisible = true;
     }
 
@@ -358,7 +407,9 @@ public sealed class ReaderViewModel : INotifyPropertyChanged, IDisposable
     {
         string text = Path.GetExtension(path).Equals(".pdf", StringComparison.OrdinalIgnoreCase)
             ? ExtractPdfText(path)
-            : File.ReadAllText(path);
+            : Path.GetExtension(path).Equals(".epub", StringComparison.OrdinalIgnoreCase)
+                ? ExtractEpubText(path)
+                : File.ReadAllText(path);
 
         if (string.IsNullOrWhiteSpace(text))
         {
@@ -374,6 +425,7 @@ public sealed class ReaderViewModel : INotifyPropertyChanged, IDisposable
     {
         timer.Stop();
         timer.Tick -= OnTick;
+        httpClient.Dispose();
     }
 
     private void LoadText(string text, bool addToRecents, string title)
@@ -502,6 +554,207 @@ public sealed class ReaderViewModel : INotifyPropertyChanged, IDisposable
     {
         using PdfDocument document = PdfDocument.Open(path);
         return string.Join(Environment.NewLine, document.GetPages().Select(page => page.Text));
+    }
+
+    private string LoadFromWebsite(Uri websiteUri)
+    {
+        using HttpResponseMessage response = httpClient.GetAsync(websiteUri).GetAwaiter().GetResult();
+        response.EnsureSuccessStatusCode();
+
+        string responseText = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+        string readableText = ExtractReadableText(responseText);
+
+        if (string.IsNullOrWhiteSpace(readableText))
+        {
+            throw new InvalidOperationException("No readable text was found at that website.");
+        }
+
+        return readableText;
+    }
+
+    private static bool TryGetWebsiteUri(string input, out Uri websiteUri)
+    {
+        string candidate = input.Trim();
+        if (string.IsNullOrWhiteSpace(candidate) || candidate.Any(char.IsWhiteSpace))
+        {
+            websiteUri = null!;
+            return false;
+        }
+
+        string uriCandidate = candidate;
+        if (!candidate.Contains("://", StringComparison.Ordinal) &&
+            (candidate.StartsWith("www.", StringComparison.OrdinalIgnoreCase) || candidate.Contains('.')))
+        {
+            uriCandidate = "https://" + candidate;
+        }
+
+        if (Uri.TryCreate(uriCandidate, UriKind.Absolute, out Uri? parsedUri) &&
+            (parsedUri.Scheme == Uri.UriSchemeHttp || parsedUri.Scheme == Uri.UriSchemeHttps))
+        {
+            websiteUri = parsedUri;
+            return true;
+        }
+
+        websiteUri = null!;
+        return false;
+    }
+
+    private static string ExtractReadableText(string content)
+    {
+        string text = Regex.Replace(content, "(?is)<(script|style|noscript|head)[^>]*>.*?</\\1>", " ");
+        text = Regex.Replace(text, "(?i)<br\\s*/?>", "\n");
+        text = Regex.Replace(text, "(?i)</(p|div|h[1-6]|li|tr|section|article|header|footer|blockquote|pre)>", "\n");
+        text = Regex.Replace(text, "<[^>]+>", " ");
+        text = WebUtility.HtmlDecode(text);
+        return Regex.Replace(text, "\\s+", " ").Trim();
+    }
+
+    private string ExtractEpubText(string path)
+    {
+        using FileStream fileStream = File.OpenRead(path);
+        using ZipArchive archive = new(fileStream, ZipArchiveMode.Read);
+
+        ZipArchiveEntry? containerEntry = archive.GetEntry("META-INF/container.xml");
+        if (containerEntry is null)
+        {
+            throw new InvalidOperationException("The EPUB container metadata could not be found.");
+        }
+
+        string packagePath;
+        using (Stream containerStream = containerEntry.Open())
+        {
+            XDocument containerDocument = XDocument.Load(containerStream);
+            XNamespace containerNamespace = "urn:oasis:names:tc:opendocument:xmlns:container";
+            packagePath = containerDocument
+                .Descendants(containerNamespace + "rootfile")
+                .Select(rootfile => (string?)rootfile.Attribute("full-path"))
+                .FirstOrDefault(path => !string.IsNullOrWhiteSpace(path))
+                ?? throw new InvalidOperationException("The EPUB package document could not be found.");
+        }
+
+        ZipArchiveEntry? packageEntry = archive.GetEntry(NormalizeZipPath(packagePath));
+        if (packageEntry is null)
+        {
+            throw new InvalidOperationException("The EPUB package document could not be opened.");
+        }
+
+        using Stream packageStream = packageEntry.Open();
+        XDocument packageDocument = XDocument.Load(packageStream);
+        XNamespace opfNamespace = "http://www.idpf.org/2007/opf";
+
+        XElement? manifest = packageDocument.Root?.Element(opfNamespace + "manifest");
+        XElement? spine = packageDocument.Root?.Element(opfNamespace + "spine");
+        if (manifest is null || spine is null)
+        {
+            throw new InvalidOperationException("The EPUB content structure is invalid.");
+        }
+
+        var manifestItems = manifest
+            .Elements(opfNamespace + "item")
+            .Select(item => new
+            {
+                Id = (string?)item.Attribute("id"),
+                Href = (string?)item.Attribute("href")
+            })
+            .Where(item => !string.IsNullOrWhiteSpace(item.Id) && !string.IsNullOrWhiteSpace(item.Href))
+            .ToDictionary(item => item.Id!, item => item.Href!, StringComparer.Ordinal);
+
+        string packageDirectory = Path.GetDirectoryName(packagePath.Replace('/', Path.DirectorySeparatorChar)) ?? string.Empty;
+        var chapters = new List<string>();
+
+        foreach (XElement itemRef in spine.Elements(opfNamespace + "itemref"))
+        {
+            string? idRef = (string?)itemRef.Attribute("idref");
+            if (string.IsNullOrWhiteSpace(idRef) || !manifestItems.TryGetValue(idRef, out string? href))
+            {
+                continue;
+            }
+
+            string entryPath = ResolveZipEntryPath(packageDirectory, href);
+            ZipArchiveEntry? chapterEntry = archive.GetEntry(entryPath);
+            if (chapterEntry is null)
+            {
+                continue;
+            }
+
+            chapters.Add(ExtractXhtmlText(chapterEntry));
+        }
+
+        return string.Join(Environment.NewLine, chapters.Where(chapter => !string.IsNullOrWhiteSpace(chapter)));
+    }
+
+    private static string ExtractXhtmlText(ZipArchiveEntry entry)
+    {
+        using Stream stream = entry.Open();
+        XDocument document = XDocument.Load(stream);
+        var builder = new StringBuilder();
+
+        if (document.Root is not null)
+        {
+            AppendText(document.Root, builder);
+        }
+
+        return Regex.Replace(builder.ToString(), "\\s+", " ").Trim();
+    }
+
+    private static void AppendText(XNode node, StringBuilder builder)
+    {
+        if (node is XText text)
+        {
+            builder.Append(text.Value);
+            return;
+        }
+
+        if (node is XCData cdata)
+        {
+            builder.Append(cdata.Value);
+            return;
+        }
+
+        if (node is not XElement element)
+        {
+            return;
+        }
+
+        string localName = element.Name.LocalName;
+        if (localName is "script" or "style")
+        {
+            return;
+        }
+
+        bool isBlockElement = localName is "article" or "aside" or "blockquote" or "br" or "div" or "footer" or "h1" or "h2" or "h3" or "h4" or "h5" or "h6" or "header" or "li" or "nav" or "p" or "pre" or "section" or "td" or "th" or "tr";
+        if (isBlockElement && builder.Length > 0 && !char.IsWhiteSpace(builder[^1]))
+        {
+            builder.Append(' ');
+        }
+
+        foreach (XNode child in element.Nodes())
+        {
+            AppendText(child, builder);
+        }
+
+        if (isBlockElement && builder.Length > 0 && !char.IsWhiteSpace(builder[^1]))
+        {
+            builder.Append(' ');
+        }
+    }
+
+    private static string ResolveZipEntryPath(string baseDirectory, string relativePath)
+    {
+        string normalizedBaseDirectory = baseDirectory.Replace('/', Path.DirectorySeparatorChar);
+        string normalizedRelativePath = relativePath.Replace('/', Path.DirectorySeparatorChar);
+        string combinedPath = string.IsNullOrWhiteSpace(normalizedBaseDirectory)
+            ? normalizedRelativePath
+            : Path.Combine(normalizedBaseDirectory, normalizedRelativePath);
+
+        string fullPath = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "epub", combinedPath));
+        string relativeToTemp = Path.GetRelativePath(Path.Combine(Path.GetTempPath(), "epub"), fullPath);
+        return relativeToTemp.Replace(Path.DirectorySeparatorChar, '/').TrimStart('/');
+    }
+
+    private static string NormalizeZipPath(string path)
+    {
+        return path.Replace('\\', '/').TrimStart('/');
     }
 
     private void LoadState()
