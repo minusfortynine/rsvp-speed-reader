@@ -43,8 +43,9 @@ Current release:
 
 Published output:
 
-- `RocketReader.Windows\bin\Release\net8.0-windows\win-x64\publish\RocketReader.Windows.exe`
 - `RocketReader.Windows\bin\Release\net8.0-windows\win-x64\publish\RocketReader-v0.1.3-win-x64.exe`
+
+The versioned EXE is the release artifact to keep, while the unversioned host exe is just an intermediate publish output.
 
 ## Notes
 

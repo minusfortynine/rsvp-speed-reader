@@ -34,9 +34,8 @@ Current release:
 
 Published output:
 
-- `.\RocketReader.Windows\bin\Release\net8.0-windows\win-x64\publish\RocketReader.Windows.exe`
 - `.\RocketReader.Windows\bin\Release\net8.0-windows\win-x64\publish\RocketReader-v0.1.3-win-x64.exe`
 
-The release build is self-contained and publishes as a single-file executable.
+The release build is self-contained and publishes as a single-file executable; keep the versioned EXE as the distributable file.
 
 Website URLs entered in the main text box are converted to readable page text before the reader starts.
