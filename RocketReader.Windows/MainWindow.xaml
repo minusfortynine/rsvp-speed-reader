@@ -183,11 +183,6 @@
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
                             <CheckBox Foreground="#E2E8F0"
-                                      IsChecked="{Binding IsMetronomeEnabled}"
-                                      Margin="0,0,22,0"
-                                      VerticalAlignment="Center"
-                                      Content="Metronome" />
-                            <CheckBox Foreground="#E2E8F0"
                                       IsChecked="{Binding UseWarmup}"
                                       VerticalAlignment="Center"
                                       Content="Warm-up" />

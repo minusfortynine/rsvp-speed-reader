@@ -7,7 +7,6 @@ using System.IO.Compression;
 using System.Net;
 using System.Net.Http;
 using System.Linq;
-using System.Media;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -195,7 +194,6 @@ public sealed class ReaderViewModel : INotifyPropertyChanged, IDisposable
     private string inputText = string.Empty;
     private bool isReaderVisible;
     private bool isPlaying;
-    private bool isMetronomeEnabled;
     private double progressPercent;
     private bool useWarmup = true;
     private string[] words = Array.Empty<string>();
@@ -258,12 +256,6 @@ public sealed class ReaderViewModel : INotifyPropertyChanged, IDisposable
                 OnPropertyChanged(nameof(PlayPauseLabel));
             }
         }
-    }
-
-    public bool IsMetronomeEnabled
-    {
-        get => isMetronomeEnabled;
-        set => SetField(ref isMetronomeEnabled, value);
     }
 
     public bool UseWarmup
@@ -381,7 +373,6 @@ public sealed class ReaderViewModel : INotifyPropertyChanged, IDisposable
         }
 
         Play();
-        TickMetronome();
     }
 
     public void Skip(int amount)
@@ -506,21 +497,12 @@ public sealed class ReaderViewModel : INotifyPropertyChanged, IDisposable
             return;
         }
 
-        TickMetronome();
         ScheduleNext();
     }
 
     private void ResetCurrentWpm()
     {
         CurrentWpm = UseWarmup ? Math.Max(180, TargetWpm * 0.55) : TargetWpm;
-    }
-
-    private void TickMetronome()
-    {
-        if (IsMetronomeEnabled)
-        {
-            SystemSounds.Asterisk.Play();
-        }
     }
 
     private void NotifyReaderState()
@@ -774,7 +756,6 @@ public sealed class ReaderViewModel : INotifyPropertyChanged, IDisposable
 
             targetWpm = state.TargetWpm <= 0 ? 300 : state.TargetWpm;
             useWarmup = state.UseWarmup;
-            isMetronomeEnabled = state.IsMetronomeEnabled;
             inputText = state.LastText ?? string.Empty;
 
             RecentItems.Clear();
@@ -792,7 +773,6 @@ public sealed class ReaderViewModel : INotifyPropertyChanged, IDisposable
         OnPropertyChanged(nameof(TargetWpmLabel));
         OnPropertyChanged(nameof(WordCount));
         OnPropertyChanged(nameof(WarmupStatus));
-        OnPropertyChanged(nameof(IsMetronomeEnabled));
     }
 
     private void SaveState()
@@ -802,7 +782,6 @@ public sealed class ReaderViewModel : INotifyPropertyChanged, IDisposable
         {
             TargetWpm = TargetWpm,
             UseWarmup = UseWarmup,
-            IsMetronomeEnabled = IsMetronomeEnabled,
             LastText = InputText,
             Recents = RecentItems.ToList()
         };
@@ -835,8 +814,6 @@ public sealed class ReaderViewModel : INotifyPropertyChanged, IDisposable
         public double TargetWpm { get; set; }
 
         public bool UseWarmup { get; set; } = true;
-
-        public bool IsMetronomeEnabled { get; set; }
 
         public string? LastText { get; set; }
 
