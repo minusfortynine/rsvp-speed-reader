@@ -19,7 +19,7 @@ using System.Windows.Threading;
 using UglyToad.PdfPig;
 using System.Xml.Linq;
 
-namespace RocketReader.Windows;
+namespace Rabbit;
 
 public partial class MainWindow : Window
 {
@@ -208,7 +208,7 @@ public sealed class ReaderViewModel : INotifyPropertyChanged, IDisposable
 
         storagePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "RocketReader",
+            "Rabbit",
             "reader-state.json");
 
         RecentItems = new ObservableCollection<RecentEntry>();

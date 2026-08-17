@@ -1,4 +1,4 @@
-# Rocket Reader Windows
+# Rabbit Windows
 
 This is a Windows-native WPF port of the RSVP prototype in `RocketReaderApp.swift`.
 
@@ -17,23 +17,23 @@ Current feature set:
 Run locally:
 
 ```powershell
-dotnet run --project .\RocketReader.Windows
+dotnet run --project .\Rabbit.Windows
 ```
 
 Publish a single EXE:
 
 ```powershell
-dotnet publish .\RocketReader.Windows -c Release
+dotnet publish .\Rabbit.Windows -c Release
 ```
 
 Current release:
 
-- Version `0.1.4`
-- Standalone EXE: `.\RocketReader.Windows\bin\Release\net8.0-windows\win-x64\publish\RocketReader-v0.1.4-win-x64.exe`
+- Version `0.1.5`
+- Standalone EXE: `.\Rabbit.Windows\bin\Release\net8.0-windows\win-x64\publish\Rabbit-v0.1.5-win-x64.exe`
 
 Published output:
 
-- `.\RocketReader.Windows\bin\Release\net8.0-windows\win-x64\publish\RocketReader-v0.1.4-win-x64.exe`
+- `.\Rabbit.Windows\bin\Release\net8.0-windows\win-x64\publish\Rabbit-v0.1.5-win-x64.exe`
 
 The release build is self-contained and publishes as a single-file executable; keep the versioned EXE as the distributable file.
 

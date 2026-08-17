@@ -1,7 +1,7 @@
-﻿<Application x:Class="RocketReader.Windows.App"
+﻿<Application x:Class="Rabbit.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:RocketReader.Windows"
+             xmlns:local="clr-namespace:Rabbit"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          

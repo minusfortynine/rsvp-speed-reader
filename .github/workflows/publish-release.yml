@@ -25,23 +25,23 @@ jobs:
       - name: Read release version
         shell: pwsh
         run: |
-          [xml]$csproj = Get-Content -Raw RocketReader.Windows/RocketReader.Windows.csproj
+          [xml]$csproj = Get-Content -Raw Rabbit.Windows/Rabbit.Windows.csproj
           $version = $csproj.Project.PropertyGroup | ForEach-Object { $_.Version } | Where-Object { $_ } | Select-Object -First 1
 
           if (-not $version) {
-            throw "Could not find a Version value in RocketReader.Windows.csproj."
+            throw "Could not find a Version value in Rabbit.Windows.csproj."
           }
 
           "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
 
       - name: Publish Windows release
-        run: dotnet publish .\RocketReader.Windows\RocketReader.Windows.csproj -c Release
+        run: dotnet publish .\Rabbit.Windows\Rabbit.Windows.csproj -c Release
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          name: RocketReader ${{ env.VERSION }}
+          name: Rabbit ${{ env.VERSION }}
           generate_release_notes: true
           fail_on_unmatched_files: true
-          files: RocketReader.Windows/bin/Release/net8.0-windows/win-x64/publish/RocketReader-v${{ env.VERSION }}-win-x64.exe
+          files: Rabbit.Windows/bin/Release/net8.0-windows/win-x64/publish/Rabbit-v${{ env.VERSION }}-win-x64.exe

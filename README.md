@@ -1,6 +1,6 @@
-# Rocket Reader
+# Rabbit
 
-Rocket Reader is a Windows-native RSVP speed reading prototype based on a Swift iOS proof of concept and the classic Rapid Serial Visual Presentation reading model.
+Rabbit is a Windows-native RSVP speed reading prototype based on a Swift iOS proof of concept and the classic Rapid Serial Visual Presentation reading model.
 
 This repository contains a WPF desktop app that presents one word at a time using ORP-style fixation, punctuation-aware timing, adjustable reading speed, and optional warm-up pacing.
 
@@ -19,31 +19,31 @@ This repository contains a WPF desktop app that presents one word at a time usin
 
 ## Project Structure
 
-- `RocketReader.Windows/` - the Windows application project
+- `Rabbit.Windows/` - the Windows application project
 
 ## Run Locally
 
 ```powershell
-Set-Location 'C:\Projects\RocketReader'
-dotnet build .\RocketReader.Windows\RocketReader.Windows.csproj
-.\RocketReader.Windows\bin\Debug\net8.0-windows\RocketReader.Windows.exe
+Set-Location 'C:\Projects\Rabbit'
+dotnet build .\Rabbit.Windows\Rabbit.Windows.csproj
+.\Rabbit.Windows\bin\Debug\net8.0-windows\Rabbit.exe
 ```
 
 ## Publish A Single EXE
 
 ```powershell
-Set-Location 'C:\Projects\RocketReader'
-dotnet publish .\RocketReader.Windows -c Release
+Set-Location 'C:\Projects\Rabbit'
+dotnet publish .\Rabbit.Windows -c Release
 ```
 
 Current release:
 
-- Version `0.1.4`
-- Standalone EXE: `RocketReader.Windows\bin\Release\net8.0-windows\win-x64\publish\RocketReader-v0.1.4-win-x64.exe`
+- Version `0.1.5`
+- Standalone EXE: `Rabbit.Windows\bin\Release\net8.0-windows\win-x64\publish\Rabbit-v0.1.5-win-x64.exe`
 
 Published output:
 
-- `RocketReader.Windows\bin\Release\net8.0-windows\win-x64\publish\RocketReader-v0.1.4-win-x64.exe`
+- `Rabbit.Windows\bin\Release\net8.0-windows\win-x64\publish\Rabbit-v0.1.5-win-x64.exe`
 
 The versioned EXE is the release artifact to keep, while the unversioned host exe is just an intermediate publish output.
 

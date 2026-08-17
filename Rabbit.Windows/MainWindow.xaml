@@ -1,11 +1,11 @@
-﻿<Window x:Class="RocketReader.Windows.MainWindow"
+﻿<Window x:Class="Rabbit.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:RocketReader.Windows"
+    xmlns:local="clr-namespace:Rabbit"
         mc:Ignorable="d"
-        Title="Rocket Reader"
+        Title="Rabbit"
         Icon="Assets/RocketReader.ico"
         Width="1200"
         Height="820"
@@ -214,7 +214,7 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Foreground="White" FontSize="36" FontWeight="SemiBold" Text="Rocket Reader" />
+                    <TextBlock Foreground="White" FontSize="36" FontWeight="SemiBold" Text="Rabbit" />
                     <TextBlock Grid.Row="1"
                                Margin="0,10,0,0"
                                Foreground="#B4BDC9"
@@ -248,7 +248,7 @@
                                      Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" />
 
                             <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,18,0,0">
-                                <Button Style="{StaticResource PrimaryButtonStyle}" Click="StartReader_Click" Content="Start Rocket Reader" />
+                                <Button Style="{StaticResource PrimaryButtonStyle}" Click="StartReader_Click" Content="Start Rabbit" />
                                 <Button Style="{StaticResource SecondaryButtonStyle}" Margin="12,0,0,0" Click="ImportFile_Click" Content="Open PDF, TXT, or EPUB" />
                             </StackPanel>
                         </Grid>

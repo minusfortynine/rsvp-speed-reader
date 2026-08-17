@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace RocketReader.Windows;
+namespace Rabbit;
 
 /// <summary>
 /// Interaction logic for App.xaml

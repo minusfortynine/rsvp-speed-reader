@@ -6,11 +6,14 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <AssemblyName>Rabbit</AssemblyName>
+    <Title>Rabbit</Title>
+    <Product>Rabbit</Product>
     <ApplicationIcon>Assets\RocketReader.ico</ApplicationIcon>
-    <Version>0.1.4</Version>
-    <AssemblyVersion>0.1.4.0</AssemblyVersion>
-    <FileVersion>0.1.4.0</FileVersion>
-    <InformationalVersion>0.1.4</InformationalVersion>
+    <Version>0.1.5</Version>
+    <AssemblyVersion>0.1.5.0</AssemblyVersion>
+    <FileVersion>0.1.5.0</FileVersion>
+    <InformationalVersion>0.1.5</InformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
@@ -33,7 +36,7 @@
   </ItemGroup>
 
   <Target Name="CopyVersionedReleaseExe" AfterTargets="Publish" Condition="'$(Configuration)' == 'Release'">
-    <Copy SourceFiles="$(PublishDir)RocketReader.Windows.exe" DestinationFiles="$(PublishDir)RocketReader-v$(Version)-win-x64.exe" />
+    <Copy SourceFiles="$(PublishDir)Rabbit.exe" DestinationFiles="$(PublishDir)Rabbit-v$(Version)-win-x64.exe" />
   </Target>
 
 </Project>
