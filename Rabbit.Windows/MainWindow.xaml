@@ -140,7 +140,7 @@
                                            Foreground="#E2E8F0"
                                            FontSize="52"
                                            FontWeight="Medium"
-                                           FontFamily="Segoe UI" />
+                                           FontFamily="Cascadia Mono, Consolas, Courier New" />
 
                                 <TextBlock Grid.Column="1"
                                            Text="{Binding CurrentOrp, Mode=OneWay}"
@@ -150,7 +150,7 @@
                                            Foreground="#EF4444"
                                            FontSize="52"
                                            FontWeight="Bold"
-                                           FontFamily="Segoe UI" />
+                                           FontFamily="Cascadia Mono, Consolas, Courier New" />
 
                                 <TextBlock Grid.Column="2"
                                            Text="{Binding CurrentSuffix, Mode=OneWay}"
@@ -160,7 +160,7 @@
                                            Foreground="#E2E8F0"
                                            FontSize="52"
                                            FontWeight="Medium"
-                                           FontFamily="Segoe UI" />
+                                           FontFamily="Cascadia Mono, Consolas, Courier New" />
                             </Grid>
                         </Viewbox>
                     </Grid>
