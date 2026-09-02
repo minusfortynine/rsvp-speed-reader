@@ -28,12 +28,13 @@ dotnet publish .\Rabbit.Windows -c Release
 
 Current release:
 
- Version `0.1.6`
+ Version `0.1.7`
  Standalone EXE: `.\Rabbit.Windows\bin\Release\net8.0-windows\win-x64\publish\Rabbit-v0.1.6-win-x64.exe`
+ Standalone EXE: `.\Rabbit.Windows\bin\Release\net8.0-windows\win-x64\publish\Rabbit-v0.1.7-win-x64.exe`
 
 Published output:
 
- `.\Rabbit.Windows\bin\Release\net8.0-windows\win-x64\publish\Rabbit-v0.1.6-win-x64.exe`
+ `.\Rabbit.Windows\bin\Release\net8.0-windows\win-x64\publish\Rabbit-v0.1.7-win-x64.exe`
 
 The release build is self-contained and publishes as a single-file executable; keep the versioned EXE as the distributable file.
 

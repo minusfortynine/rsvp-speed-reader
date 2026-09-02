@@ -112,24 +112,19 @@
 
                     <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1.5" />
-                            <ColumnDefinition Width="760" />
-                            <ColumnDefinition Width="1.5" />
+                            <ColumnDefinition Width="960" />
                         </Grid.ColumnDefinitions>
 
-                        <Border Grid.Column="0" Width="1.5" Height="92" Background="#29FFFFFF" />
-                        <Border Grid.Column="2" Width="1.5" Height="92" Background="#29FFFFFF" />
-
-                        <Viewbox Grid.Column="1"
+                        <Viewbox Grid.Column="0"
                                  Stretch="Uniform"
                                  StretchDirection="DownOnly"
                                  HorizontalAlignment="Center"
                                  VerticalAlignment="Center">
-                            <Grid Width="760">
+                            <Grid Width="960">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="360" />
+                                    <ColumnDefinition Width="460" />
                                     <ColumnDefinition Width="40" />
-                                    <ColumnDefinition Width="360" />
+                                    <ColumnDefinition Width="460" />
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Grid.Column="0"

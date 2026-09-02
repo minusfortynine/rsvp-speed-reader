@@ -38,12 +38,12 @@ dotnet publish .\Rabbit.Windows -c Release
 
 Current release:
 
-- Version `0.1.6`
-- Standalone EXE: `Rabbit.Windows\bin\Release\net8.0-windows\win-x64\publish\Rabbit-v0.1.6-win-x64.exe`
+- Version `0.1.7`
+- Standalone EXE: `Rabbit.Windows\bin\Release\net8.0-windows\win-x64\publish\Rabbit-v0.1.7-win-x64.exe`
 
 Published output:
 
-- `Rabbit.Windows\bin\Release\net8.0-windows\win-x64\publish\Rabbit-v0.1.6-win-x64.exe`
+- `Rabbit.Windows\bin\Release\net8.0-windows\win-x64\publish\Rabbit-v0.1.7-win-x64.exe`
 
 The versioned EXE is the release artifact to keep, while the unversioned host exe is just an intermediate publish output.
 
